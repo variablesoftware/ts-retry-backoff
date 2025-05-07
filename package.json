@@ -1,7 +1,7 @@
 {
   "name": "@variablesoftware/ts-retry-backoff",
   "description": "🎛️🔁🚀 A tiny, zero‑dependencies retry helper with exponential backoff + jitter—usable for KV, HTTP, Durable Objects, or any async function.",
-  "version": "0.0.0",
+  "version": "0.0.2",
   "author": {
     "name": "Rob Friedman",
     "email": "bunkcode@variablesoftware.com",

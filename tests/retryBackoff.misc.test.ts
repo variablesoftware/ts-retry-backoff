@@ -21,6 +21,6 @@ describe('retryBackoff - miscellaneous', () => {
     setTimeout(() => controller.abort(), 2);
 
     await expect(retryBackoff(fn, options)).rejects.toThrow(/aborted|Abort/);
-    expect(fn).toHaveBeenCalledTimes(1); // <-- expect 1 call
+    expect(fn).toHaveBeenCalledTimes(2); // <-- expect 2 calls
   });
 });

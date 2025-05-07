@@ -10,17 +10,17 @@ import { retryBackoff } from '@variablesoftware/ts-retry-backoff';
  *
  * @param fn        Function returning a Promise<T> to retry
  * @param options   Optional settings:
- *   - maxRetries (default 5): number of retry attempts
- *   - baseDelayMs (default 50): initial backoff in milliseconds
- *   - minDelayMs: minimum delay between retries (ms)
- *   - maxDelayMs: maximum delay between retries (ms)
- *   - strategy: backoff function (exponential, linear, fibonacci, or custom)
- *   - jitter: [0…1] fraction of delay to randomize (default 0)
- *   - retryOn    (err) => boolean: predicate to decide if an error should be retried
- *   - onRetry    (err, attempt, delay): callback on each retry
- *   - onSuccess  (result, attempt): callback on success
- *   - onGiveUp   (err, attempt): callback when giving up
- *   - signal: AbortSignal to cancel retries
+ *   - maxRetries?: number
+ *   - baseDelayMs?: number
+ *   - minDelayMs?: number
+ *   - maxDelayMs?: number
+ *   - strategy?: (attempt: number, baseMs: number) => number
+ *   - jitter?: number
+ *   - retryOn?: (err: unknown) => boolean
+ *   - onRetry?: (err: unknown, attempt: number, delay: number) => void
+ *   - onSuccess?: (result: unknown, attempt: number) => void
+ *   - onGiveUp?: (err: unknown, attempt: number) => void
+ *   - signal?: AbortSignal
  *
  * @returns         Promise<T> resolving to fn()’s value or rejecting after retries
  */

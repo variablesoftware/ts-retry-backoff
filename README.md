@@ -26,6 +26,22 @@ npm install @variablesoftware/ts-retry-backoff
 
 ---
 
+## Options (Summary)
+
+- `maxRetries?: number`
+- `baseDelayMs?: number`
+- `minDelayMs?: number`
+- `maxDelayMs?: number`
+- `strategy?: (attempt: number, baseMs: number) => number`
+- `jitter?: number`
+- `retryOn?: (err: unknown) => boolean`
+- `onRetry?: (err: unknown, attempt: number, delay: number) => void`
+- `onSuccess?: (result: unknown, attempt: number) => void`
+- `onGiveUp?: (err: unknown, attempt: number) => void`
+- `signal?: AbortSignal`
+
+---
+
 ## 📄 License
 
 MIT © Rob Friedman / Variable Software

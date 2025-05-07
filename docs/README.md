@@ -19,7 +19,19 @@ npm install @variablesoftware/ts-retry-backoff
 ```ts
 import { retryBackoff } from '@variablesoftware/ts-retry-backoff';
 
-await retryBackoff(() => fetch('https://example.com'));
+await retryBackoff(() => fetch('https://example.com'), {
+  maxRetries: 3,
+  baseDelayMs: 100,
+  minDelayMs: 100,
+  maxDelayMs: 2000,
+  jitter: 0.5,
+  strategy: (attempt, base) => base * 2 ** attempt,
+  retryOn: err => err instanceof TypeError,
+  onRetry: (err, attempt, delay) => console.warn(`Retry #${attempt} in ${delay}ms`),
+  onSuccess: (result, attempt) => console.log(`Success after ${attempt} attempts`),
+  onGiveUp: (err, attempt) => console.error(`Giving up after ${attempt} attempts`),
+  signal: new AbortController().signal,
+});
 ```
 
 ---

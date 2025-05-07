@@ -8,19 +8,28 @@ describe('retryBackoff - miscellaneous', () => {
   });
 
   it('aborts retries if AbortSignal is triggered', async () => {
+    vi.useFakeTimers();
     const fn = vi.fn().mockRejectedValue(new Error('fail'));
     const controller = new AbortController();
     const options: RetryBackoffOptions = {
       maxRetries: 5,
       signal: controller.signal,
-      minDelayMs: 1,
-      maxDelayMs: 1,
+      minDelayMs: 10,
+      maxDelayMs: 10,
     };
 
-    // Abort after first attempt (during delay before second call)
-    setTimeout(() => controller.abort(), 2);
+    const promise = retryBackoff(fn, options);
 
-    await expect(retryBackoff(fn, options)).rejects.toThrow(/aborted|Abort/);
-    expect(fn).toHaveBeenCalledTimes(1); // <-- expect 1 call
+    // Advance timers to the point where the retry is scheduled but not yet executed
+    await vi.advanceTimersByTimeAsync(10); // first delay
+
+    // Abort before the next retry
+    controller.abort();
+
+    // Let the abort propagate
+    await expect(promise).rejects.toThrow(/aborted|Abort/);
+    expect(fn).toHaveBeenCalledTimes(1);
+
+    vi.useRealTimers();
   });
 });

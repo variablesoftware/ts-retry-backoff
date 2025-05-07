@@ -1,0 +1,14 @@
+*.ts
+*.test.*
+tests/
+docs/
+.vscode/
+.eslintrc*
+eslint.config.js
+.prettier*
+husky/
+vitest.config.*
+tsconfig*.json
+README.md
+.yarn/
+.pnp.*

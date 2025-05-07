@@ -1,0 +1,12 @@
+# @variablesoftware/retry 🚀
+
+A tiny, zero‑dependencies retry helper with exponential backoff + jitter—usable for KV, HTTP, Durable Objects, or any async function.
+
+---
+
+## Installation
+
+```bash
+yarn add @variablesoftware/retry
+# or
+npm install @variablesoftware/retry

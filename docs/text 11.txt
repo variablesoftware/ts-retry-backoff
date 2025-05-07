@@ -1,0 +1,53 @@
+@@ export interface RetryOptions {
+-  jitter?:        number               // [0…1], fraction of raw delay to add (default 0)
++  jitter?:        number               // [0…1], fraction of raw delay to add (default 0)
++  maxDelayMs?:    number               // absolute cap on delay (default Infinity)
+   retryOn?:       (err: any) => boolean // default: always retry
+   onRetry?:       (err: any, attempt: number, delay: number) => void
+@@
+ export async function withRetry<T>(
+   fn: () => Promise<T>,
+-  opts: RetryOptions = {}
++  opts: RetryOptions = {}
+ ): Promise<T> {
+   const {
+     maxRetries    = 5,
+     baseDelayMs   = 50,
+     strategy      = strategies.exponential,
+     jitter        = 0,
++    maxDelayMs    = Infinity,
+     retryOn       = () => true,
+     onRetry       = () => {},
+     onSuccess     = () => {},
+     onGiveUp      = () => {},
+     signal
+   } = opts
+
+   let attempt = 0
+
+   while (true) {
+     if (signal?.aborted) throw new DOMException('Aborted', 'AbortError')
+
+     try {
+       const result = await fn()
+       onSuccess(result, attempt)
+       return result
+     } catch (err) {
+       if (attempt >= maxRetries || !retryOn(err)) {
+         onGiveUp(err, attempt)
+         throw err
+       }
+
+       // compute raw + jittered delay
+       const raw = strategy(attempt, baseDelayMs)
+       const withJitter = raw + (jitter > 0 ? Math.random() * raw * jitter : 0)
+
+       // cap to maxDelayMs
+       const delayMs = Math.min(withJitter, maxDelayMs)
+
+       onRetry(err, attempt, delayMs)
+       await delay(delayMs, signal)
+       attempt++
+     }
+   }
+}

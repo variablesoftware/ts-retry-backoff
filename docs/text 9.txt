@@ -1,0 +1,85 @@
+// Enhanced withRetry with hook support
+
+export interface RetryOptions {
+  maxRetries?: number;                                // Total retry attempts before giving up
+  baseDelayMs?: number;                               // Initial backoff delay in milliseconds
+  retryOn?: (err: any) => boolean;                    // Predicate: should we retry on this error?
+  onRetry?: (err: any, attempt: number, delayMs: number) => void;     // Called before each retry
+  onSuccess?: (result: any, attempts: number) => void;               // Called once, if fn succeeds (attempts>0)
+  onGiveUp?: (err: any) => void;                      // Called once, if we exhaust all retries
+}
+
+export async function withRetry<T>(
+  fn: () => Promise<T>,
+  {
+    maxRetries   = 5,
+    baseDelayMs  = 50,
+    retryOn      = () => false,
+    onRetry,
+    onSuccess,
+    onGiveUp,
+  }: RetryOptions = {}
+): Promise<T> {
+  let lastError: any = null;
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const result = await fn();
+      // if we retried at least once, call onSuccess
+      if (attempt > 0 && onSuccess) {
+        onSuccess(result, attempt);
+      }
+      return result;
+    } catch (err) {
+      lastError = err;
+      const shouldRetry = retryOn(err);
+      const isLastAttempt = attempt === maxRetries;
+      if (!shouldRetry || isLastAttempt) {
+        // no more retries, give up
+        if (onGiveUp) onGiveUp(err);
+        throw err;
+      }
+      // compute exponential backoff + jitter
+      const delayMs = baseDelayMs * 2 ** attempt;
+      const jitter  = Math.random() * (baseDelayMs / 2);
+      const totalDelay = delayMs + jitter;
+      // before waiting, invoke onRetry hook
+      if (onRetry) onRetry(err, attempt + 1, totalDelay);
+      // wait
+      await new Promise(res => setTimeout(res, totalDelay));
+      // next loop iteration
+    }
+  }
+  // fallback: should never reach
+  throw lastError;
+}
+
+// Example usage:
+
+import { withRetry } from '@variablesoftware/retry';
+import { Counter, Histogram } from 'prom-client';
+import logger from './logger';
+
+const kvRetryCounter = new Counter({ name: 'kv_retry_total', help: 'Total KV retries' });
+const kvRetryLatency = new Histogram({ name: 'kv_retry_delay_seconds', help: 'Backoff delay seconds' });
+
+async function safeKvGet<T>(kv: KVNamespace, key: string) {
+  return withRetry(
+    () => kv.get<T>(key),
+    {
+      maxRetries: 5,
+      baseDelayMs: 100,
+      retryOn: err => err?.name === 'RateLimitExceededError' || err?.status === 429,
+      onRetry: (err, attempt, delayMs) => {
+        logger.warn(`KV get retry #${attempt} for key="${key}" in ${Math.round(delayMs)}ms`, { key, attempt, error: err.message });
+        kvRetryCounter.inc();
+        kvRetryLatency.observe(delayMs / 1000);
+      },
+      onSuccess: (_result, attempts) => {
+        logger.info(`KV get succeeded for key="${key}" after ${attempts} retries`, { key, attempts });
+      },
+      onGiveUp: err => {
+        logger.error(`KV get giving up for key="${key}" after ${maxRetries} retries`, { key, error: err.message });
+      }
+    }
+  );
+}

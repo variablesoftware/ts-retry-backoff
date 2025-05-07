@@ -1,0 +1,205 @@
+import { describe, it, expect, vi } from 'vitest';
+import { retryBackoff, type RetryBackoffOptions } from '../src/index';
+
+describe('retryBackoff', () => {
+  describe('basic retry logic', () => {
+    it('resolves on first try if no error', async () => {
+      const fn = vi.fn().mockResolvedValue('ok');
+      const result = await retryBackoff(fn);
+      expect(result).toBe('ok');
+      expect(fn).toHaveBeenCalledTimes(1);
+    });
+
+    it('retries on failure and eventually succeeds', async () => {
+      const fn = vi.fn()
+        .mockRejectedValueOnce(new Error('fail'))
+        .mockResolvedValue('success');
+      const result = await retryBackoff(fn, { maxRetries: 2 });
+      expect(result).toBe('success');
+      expect(fn).toHaveBeenCalledTimes(2);
+    });
+
+    it('fails after max retries', async () => {
+      const fn = vi.fn().mockRejectedValue(new Error('fail'));
+      await expect(retryBackoff(fn, { maxRetries: 2 })).rejects.toThrow('fail');
+      expect(fn).toHaveBeenCalledTimes(3); // initial + 2 retries
+    });
+
+    it('only calls once if maxRetries is 0', async () => {
+      const fn = vi.fn().mockRejectedValue(new Error('fail'));
+      await expect(retryBackoff(fn, { maxRetries: 0 })).rejects.toThrow('fail');
+      expect(fn).toHaveBeenCalledTimes(1);
+    });
+
+    it('handles synchronous throw', async () => {
+      const fn = vi.fn(() => { throw new Error('sync fail'); });
+      await expect(retryBackoff(fn, { maxRetries: 1 })).rejects.toThrow('sync fail');
+      expect(fn).toHaveBeenCalledTimes(2);
+    });
+
+    it('function that always resolves never retries', async () => {
+      const fn = vi.fn().mockResolvedValue('always ok');
+      const result = await retryBackoff(fn, { maxRetries: 5 });
+      expect(result).toBe('always ok');
+      expect(fn).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('option boundaries and validation', () => {
+    it('throws if min > max', async () => {
+      const fn = vi.fn().mockRejectedValue(new Error('fail'));
+      await expect(retryBackoff(fn, { minDelayMs: 100, maxDelayMs: 10 })).rejects.toThrow();
+    });
+
+    it('works if min === max', async () => {
+      const fn = vi.fn()
+        .mockRejectedValueOnce(new Error('fail'))
+        .mockResolvedValue('ok');
+      const result = await retryBackoff(fn, { maxRetries: 1, minDelayMs: 50, maxDelayMs: 50 });
+      expect(result).toBe('ok');
+      expect(fn).toHaveBeenCalledTimes(2);
+    });
+
+    it('treats negative maxRetries as zero', async () => {
+      const fn = vi.fn().mockRejectedValue(new Error('fail'));
+      await expect(retryBackoff(fn, { maxRetries: -1 })).rejects.toThrow('fail');
+      expect(fn).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('delay and jitter', () => {
+    it('respects min/max delay and jitter', async () => {
+      const fn = vi.fn()
+        .mockRejectedValueOnce(new Error('fail'))
+        .mockResolvedValue('ok');
+      const options: RetryBackoffOptions = {
+        maxRetries: 1,
+        minDelayMs: 10,
+        maxDelayMs: 20,
+        jitter: 0.5,
+      };
+      const result = await retryBackoff(fn, options);
+      expect(result).toBe('ok');
+      expect(fn).toHaveBeenCalledTimes(2);
+      // Optionally: mock timers and check delays
+    });
+
+    it('works with jitter = 0', async () => {
+      const fn = vi.fn()
+        .mockRejectedValueOnce(new Error('fail'))
+        .mockResolvedValue('ok');
+      const result = await retryBackoff(fn, { maxRetries: 1, jitter: 0 });
+      expect(result).toBe('ok');
+      expect(fn).toHaveBeenCalledTimes(2);
+    });
+
+    it('works with jitter = 1', async () => {
+      const fn = vi.fn()
+        .mockRejectedValueOnce(new Error('fail'))
+        .mockResolvedValue('ok');
+      const result = await retryBackoff(fn, { maxRetries: 1, jitter: 1 });
+      expect(result).toBe('ok');
+      expect(fn).toHaveBeenCalledTimes(2);
+    });
+
+    it('retries with linear strategy', async () => {
+      const fn = vi.fn()
+        .mockRejectedValueOnce(new Error('fail'))
+        .mockResolvedValue('ok');
+      const result = await retryBackoff(fn, { maxRetries: 1, strategy: (attempt, base) => base * (attempt + 1) });
+      expect(result).toBe('ok');
+      expect(fn).toHaveBeenCalledTimes(2);
+    });
+
+    it('retries with fibonacci strategy', async () => {
+      const fn = vi.fn()
+        .mockRejectedValueOnce(new Error('fail'))
+        .mockResolvedValue('ok');
+      const result = await retryBackoff(fn, { maxRetries: 1, strategy: (attempt, base) => {
+        let a = 0, b = 1;
+        for (let i = 0; i < attempt; i++) [a, b] = [b, a + b];
+        return a * base;
+      } });
+      expect(result).toBe('ok');
+      expect(fn).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('custom retry logic', () => {
+    it('propagates the last error', async () => {
+      const fn = vi.fn()
+        .mockRejectedValueOnce(new Error('fail1'))
+        .mockRejectedValueOnce(new Error('fail2'));
+      await expect(retryBackoff(fn, { maxRetries: 1 })).rejects.toThrow('fail2');
+    });
+
+    it('supports custom retryOn logic', async () => {
+      const fn = vi.fn()
+        .mockRejectedValueOnce(new Error('fail'))
+        .mockResolvedValue('ok');
+      const options: RetryBackoffOptions = {
+        maxRetries: 5,
+        retryOn: (err) => err.message === 'fail',
+      };
+      const result = await retryBackoff(fn, options);
+      expect(result).toBe('ok');
+      expect(fn).toHaveBeenCalledTimes(2);
+    });
+
+    it('does not retry if retryOn returns false', async () => {
+      const fn = vi.fn().mockRejectedValue(new Error('fatal'));
+      const options: RetryBackoffOptions = {
+        maxRetries: 5,
+        retryOn: (err) => false,
+      };
+      await expect(retryBackoff(fn, options)).rejects.toThrow('fatal');
+      expect(fn).toHaveBeenCalledTimes(1);
+    });
+
+    it('stops retrying if retryOn returns false after some retries', async () => {
+      const fn = vi.fn()
+        .mockRejectedValueOnce(new Error('retryable'))
+        .mockRejectedValueOnce(new Error('not-retryable'));
+      const options: RetryBackoffOptions = {
+        maxRetries: 5,
+        retryOn: (err) => err.message === 'retryable',
+      };
+      await expect(retryBackoff(fn, options)).rejects.toThrow('not-retryable');
+      expect(fn).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('miscellaneous', () => {
+    it('handles promise rejection with non-Error values', async () => {
+      const fn = vi.fn().mockRejectedValue('fail string');
+      await expect(retryBackoff(fn, { maxRetries: 1 })).rejects.toBe('fail string');
+    });
+
+    it('aborts retries if AbortSignal is triggered', async () => {
+      const fn = vi.fn().mockRejectedValue(new Error('fail'));
+      const controller = new AbortController();
+      const options: RetryBackoffOptions = {
+        maxRetries: 5,
+        signal: controller.signal,
+        minDelayMs: 1, // make retries fast
+        maxDelayMs: 1,
+      };
+
+      // Abort after first attempt (during delay before second call)
+      setTimeout(() => controller.abort(), 2);
+
+      await expect(retryBackoff(fn, options)).rejects.toThrow(/aborted|Abort/);
+      expect(fn).toHaveBeenCalledTimes(2); // <-- fix: expect 2 calls
+    });
+
+    // If your implementation supports cancellation, add a test here:
+    // it('aborts retries if cancelled', async () => {
+    //   // Implement if supported
+    // });
+
+    // If your implementation supports custom backoff strategies, add a test here:
+    // it('supports custom backoff calculation', async () => {
+    //   // Implement if supported
+    // });
+  });
+});

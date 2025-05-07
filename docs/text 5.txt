@@ -1,0 +1,23 @@
+export async function withRetry<T>(
+  fn: () => Promise<T>,
+  {
+    maxRetries = 5,
+    baseDelayMs = 50,
+    retryOn = () => false
+  }: {
+    maxRetries?: number;
+    baseDelayMs?: number;
+    retryOn?: (err: any) => boolean;
+  } = {}
+): Promise<T> {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await fn();
+    } catch (err: any) {
+      if (!retryOn(err) || attempt >= maxRetries) throw err;
+      const delay  = baseDelayMs * 2 ** attempt;
+      const jitter = Math.random() * (baseDelayMs / 2);
+      await new Promise(r => setTimeout(r, delay + jitter));
+    }
+  }
+}

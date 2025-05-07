@@ -1,0 +1,18 @@
+import { withRetry } from '@variablesoftware/retry';
+
+const isServerError = (err: any) =>
+  err instanceof TypeError || (err.status && err.status >= 500);
+
+async function fetchWithRetry(url: string, init?: RequestInit) {
+  return withRetry(
+    () => fetch(url, init).then(res => {
+      if (!res.ok) throw Object.assign(new Error(res.statusText), { status: res.status });
+      return res;
+    }),
+    {
+      maxRetries: 3,
+      baseDelayMs: 100,
+      retryOn: isServerError
+    }
+  );
+}

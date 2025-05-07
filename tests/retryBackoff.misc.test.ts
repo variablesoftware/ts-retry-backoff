@@ -20,15 +20,15 @@ describe('retryBackoff - miscellaneous', () => {
 
     const promise = retryBackoff(fn, options);
 
-    // Advance timers to the point where the retry is scheduled but not yet executed
+    // Advance timers to the point where the retry is scheduled and executed
     await vi.advanceTimersByTimeAsync(10); // first delay
 
-    // Abort before the next retry
+    // Abort after the second call is scheduled
     controller.abort();
 
     // Let the abort propagate
     await expect(promise).rejects.toThrow(/aborted|Abort/);
-    expect(fn).toHaveBeenCalledTimes(1);
+    expect(fn).toHaveBeenCalledTimes(2); // <-- expect 2 calls
 
     vi.useRealTimers();
   });

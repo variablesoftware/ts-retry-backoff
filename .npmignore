@@ -12,4 +12,6 @@ tsconfig*.json
 README.md
 .yarn/
 .pnp.*
-dist/tests/
+dist/tests/*.*
+dist/src/*.ts*
+dist/src/index.d.t

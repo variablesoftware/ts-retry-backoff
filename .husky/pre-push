@@ -1,2 +1,3 @@
-yarn test:build && yarn lint
+set -x
+yarn lint && yarn release:dry
 gitleaks dir . || exit 1

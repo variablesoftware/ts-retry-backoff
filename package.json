@@ -1,7 +1,7 @@
 {
   "name": "@variablesoftware/ts-retry-backoff",
   "description": "🎛️🔁🚀 A tiny, zero‑dependencies retry helper with exponential backoff + jitter—usable for KV, HTTP, Durable Objects, or any async function.",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "author": {
     "name": "Rob Friedman",
     "email": "bunkcode@variablesoftware.com",
@@ -18,17 +18,17 @@
     "zero-dependencies"
   ],
   "license": "MIT",
-  "main": "dist/src/index.js",
-  "types": "dist/src/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist/index.js",
+    "dist/index.min.js",
+    "dist/index.min.js.map"
   ],
   "exports": {
-    ".": {
-      "import": "./dist/src/index.js",
-      "types": "./dist/src/index.d.ts",
-      "import1": "./dist/src/index.esm.js",
-      "require1": "./dist/src/index.cjs.js"
+    "dist": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
     }
   },
   "type": "module",
@@ -36,31 +36,33 @@
     "**/*.{ts,js,mjs,cts}": "eslint --fix"
   },
   "scripts": {
-    "build": "tsc && yarn minify",
-    "prepare": "husky install",
-    "build:watch": "tsc --watch",
-    "build:release": "yarn build && yarn minify",
-    "minify": "yarn terser --timings --compress --mangle --toplevel --source-map includeSources dist/src/index.js --output dist/src/index.min.js",
+    "build": "tsc && yarn minify; ls -lah dist",
+    "prepare": "yarn husky install",
+    "watch:build": "tsc --watch",
+    "build:release": "yarn build",
+    "minify": "yarn terser --timings --compress --mangle --toplevel --source-map includeSources dist/index.js --output dist/index.min.js",
     "prebuild": "yarn clean",
     "prepublishOnly": "yarn test:build",
     "clean": "rm -rf dist",
-    "clean:all": "rm -rf dist && git tag -d $(git tag)",
-    "dev": "vitest watch",
+    "clean:all:tags": "rm -rf dist && git tag -d $(git tag)",
+    "dev": "yarn vitest watch",
     "format": "yarn format:all",
     "format:all": "prettier --write --log-level error .",
-    "lint": "eslint . --ext .ts,.tsx",
-    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "lint": "eslint --stats . --ext .ts,.tsx",
+    "lint:fix": "eslint --stats . --ext .ts,.tsx --fix-dry-run",
+    "lint:fix:nodry": "eslint --stats . --ext .ts,.tsx --fix",
     "prettier:check": "prettier --check .",
     "publish:npm": "yarn npm publish --access public",
     "test": "vitest run",
-    "test:watch": "yarn vitest --watch",
+    "watch:test": "yarn vitest --watch",
     "test:build": "yarn clean && yarn build && yarn test",
     "corepack:go": "corepack enable && corepack prepare yarn@4.9.1 --activate",
     "upgrade:latest": "yarn set version stable && yarn upgrade-interactive",
-    "version:patch": "yarn version patch",
-    "version:minor": "yarn version minor",
-    "version:major": "yarn version major",
-    "release": "yarn clean && yarn build:release && git push && git push --tags && yarn npm publish --access public"
+    ":patch": "yarn version patch",
+    ":minor": "yarn version minor",
+    ":major": "yarn version major",
+    "release": "yarn clean && yarn build:release && git push && git push --tags && yarn npm publish --access public",
+    "release:dry": "yarn clean && yarn build:release && npm pack --dry-run"
   },
   "engines": {
     "node": ">=14"
@@ -70,6 +72,7 @@
     "url": "https://github.com/variablesoftware/ts-retry-backoff.git"
   },
   "devDependencies": {
+    "@eslint/config-inspector": "^1.0.2",
     "@eslint/js": "^9.26.0",
     "@microsoft/tsdoc": "^0.15.1",
     "@microsoft/tsdoc-config": "^0.17.1",

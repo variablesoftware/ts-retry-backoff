@@ -15,7 +15,7 @@ describe('retryBackoff - custom retry logic', () => {
       .mockResolvedValue('ok');
     const options: RetryBackoffOptions = {
       maxRetries: 5,
-      retryOn: (err) => err.message === 'fail',
+      retryOn: (err) => err instanceof Error && err.message === 'fail',
     };
     const result = await retryBackoff(fn, options);
     expect(result).toBe('ok');
@@ -26,7 +26,7 @@ describe('retryBackoff - custom retry logic', () => {
     const fn = vi.fn().mockRejectedValue(new Error('fatal'));
     const options: RetryBackoffOptions = {
       maxRetries: 5,
-      retryOn: (err) => false,
+      retryOn: (_err) => false,
     };
     await expect(retryBackoff(fn, options)).rejects.toThrow('fatal');
     expect(fn).toHaveBeenCalledTimes(1);
@@ -38,7 +38,7 @@ describe('retryBackoff - custom retry logic', () => {
       .mockRejectedValueOnce(new Error('not-retryable'));
     const options: RetryBackoffOptions = {
       maxRetries: 5,
-      retryOn: (err) => err.message === 'retryable',
+      retryOn: (err) => err instanceof Error && err.message === 'retryable',
     };
     await expect(retryBackoff(fn, options)).rejects.toThrow('not-retryable');
     expect(fn).toHaveBeenCalledTimes(2);

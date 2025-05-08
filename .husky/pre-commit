@@ -1,2 +1,2 @@
 set -x
-yarn lint
+yarn lint || exit 1

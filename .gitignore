@@ -4,6 +4,7 @@
 
 # junk text, find a better name OK?
 docs/text*.txt
+docs/legacy/
 # Yarn PnP loader files (Yarn 2+)
 .pnp.*
 .yarn/cache/

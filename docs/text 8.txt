@@ -1,7 +1,0 @@
-// vs-retry-d1.ts
-import { withRetry } from '@variablesoftware/retry';
-const isD1Error = (err: any) => err?.message?.includes('too many requests');
-
-export function d1Query(db: D1Database, sql: string, params?: any[]) {
-  return withRetry(() => db.prepare(sql).bind(...(params||[])).all(), { retryOn: isD1Error });
-}

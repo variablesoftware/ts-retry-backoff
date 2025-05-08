@@ -4,8 +4,7 @@ When bundling into a Cloudflare Worker, the **minified** size (not gzip) impacts
 
 | Implementation                           | Raw Source (bytes) | Minified (bytes) |
 |------------------------------------------|-------------------:|-----------------:|
-| **Custom `retryBackoff` (no hooks)**        |               ~21 |             ~380 |
-| **Custom `retryBackoff` (with `onRetry`)**  |               ~952 |             ~2106 |
+| **Custom `retryBackoff` (with `onRetry`)**  |               ~1960 |             ~862 |
 | **async-retry**                          |             ~5 100 |           ~3 600 |
 | **p-retry**                              |             ~8 200 |           ~5 800 |
 | **promise-retry**                        |             ~6 400 |           ~4 500 |

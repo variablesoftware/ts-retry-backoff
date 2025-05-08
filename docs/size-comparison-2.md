@@ -7,17 +7,17 @@
 | **promise-retry**   | ~6 kB          | ~1.6 kB  | ✔ retry(err), factor, min/max timeout         |
 | **retry**           | ~4 kB          | ~1.1 kB  | ✔ event hooks, exponential/fibonacci          |
 | **backoff**         | ~3 kB          | ~0.9 kB  | ✔ EventEmitter API, strategies                |
-| **@variablesoftware/ts-retry-backoff** (loop) | ~2 kB        | ~0.9 kB  | ✖  built‑in hooks ( customizable via `retryOn`) |
+| **@variablesoftware/ts-retry-backoff** (loop) | ~1 kB        | ~0.9 kB  | ✖  built‑in hooks ( customizable via `retryOn`) |
 
 ¹ Minified with Terser (no dependencies bundled)  
 ² Minified + gzip
 
 ---
 
-## Custom `withRetry` Bundle Size
+## Custom `retryBackoff` Bundle Size
 
 ```ts
-export async function withRetry<T>(
+export async function retryBackoff<T>(
   fn: () => Promise<T>,
   {
     maxRetries = 5,
@@ -42,14 +42,14 @@ export async function withRetry<T>(
 }
 ```
 
-- **Raw source**: ~550 bytes  
-- **Minified** (Terser default): ~380 bytes  
+- **Raw source**: ~1960 bytes  
+- **Minified** (Terser default): ~862 bytes  
 - **Gzipped**: ~~180 bytes  
 
 Even with a small wrapper for hooks:
 
 ```ts
-export async function withRetry<T>(
+export async function retryBackoff<T>(
   fn: () => Promise<T>,
   {
     maxRetries = 5,

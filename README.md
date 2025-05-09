@@ -1,5 +1,9 @@
 # @variablesoftware/ts-retry-backoff 🎛️🔁🚀
 
+[![Test Suite](https://img.shields.io/badge/tests-passing-brightgreen)](https://github.com/variablesoftware/ts-retry-backoff/actions)
+[![NPM version](https://img.shields.io/npm/v/@variablesoftware/ts-retry-backoff?style=flat-square)](https://www.npmjs.com/package/@variablesoftware/ts-retry-backoff)
+[![License](https://img.shields.io/github/license/variablesoftware/ts-retry-backoff?style=flat-square)](https://github.com/variablesoftware/ts-retry-backoff/blob/main/LICENSE.txt)
+
 > 🎛️🔁🚀 A tiny, zero‑dependencies retry helper with exponential backoff, jitter, min/max delay, and multiple strategies—usable for KV, HTTP, Durable Objects, or any async function.
 
 ---

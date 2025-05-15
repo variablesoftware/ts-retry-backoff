@@ -15,15 +15,20 @@
     "jitter",
     "async",
     "promise",
+    "promise-retry",
+    "resilience",
+    "retries",
+    "exponential",
+    "failure",
     "zero-dependencies"
   ],
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist/index.js",
-    "dist/index.min.js",
-    "dist/index.min.js.map"
+    "dist",
+    "LICENSE.txt",
+    "README.md"
   ],
   "exports": {
     "dist": {

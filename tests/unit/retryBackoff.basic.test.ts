@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { retryBackoff } from '../src/index';
+import { retryBackoff } from '../../src/index';
 
 describe('retryBackoff - basic retry logic', () => {
   it('resolves on first try if no error', async () => {

@@ -2,7 +2,7 @@
 
 type BackoffFn = (_attempt: number, _baseMs: number) => number
 
-const strategies: Record<string, BackoffFn> = {
+export const strategies: Record<string, BackoffFn> = {
   exponential: (n, base)     => base * 2 ** n,
   linear:      (n, base)     => base * (n + 1),
   fibonacci:   (n, base) => {
@@ -26,7 +26,7 @@ export interface RetryBackoffOptions {
   signal?:        AbortSignal
 }
 
-function delay(ms: number, signal?: AbortSignal): Promise<void> {
+export function delay(ms: number, signal?: AbortSignal): Promise<void> {
   if (signal?.aborted) {
     // DOMException so it matches fetch/stream aborts
     throw new DOMException('Aborted', 'AbortError')

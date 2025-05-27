@@ -20,6 +20,10 @@
     "retries",
     "exponential",
     "failure",
+    "failure-recovery",
+    "timeout",
+    "delay",
+    "throttle",
     "zero-dependencies"
   ],
   "license": "MIT",

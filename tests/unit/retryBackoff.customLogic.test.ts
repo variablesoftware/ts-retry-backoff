@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { retryBackoff, type RetryBackoffOptions } from '../src/index';
+import { retryBackoff, type RetryBackoffOptions } from '../../src/index';
 
 describe('retryBackoff - custom retry logic', () => {
   it('propagates the last error', async () => {

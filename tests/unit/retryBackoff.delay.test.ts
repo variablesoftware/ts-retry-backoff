@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { retryBackoff } from '../src/index';
+import { retryBackoff } from '../../src/index';
 
 describe('retryBackoff - delay, jitter, and strategies', () => {
   it('respects min/max delay and jitter', async () => {

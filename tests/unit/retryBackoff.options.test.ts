@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { retryBackoff } from '../src/index';
+import { retryBackoff } from '../../src/index';
 
 describe('retryBackoff - option boundaries and validation', () => {
   it('throws if min > max', async () => {

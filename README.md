@@ -3,6 +3,10 @@
 [![Test Suite](https://img.shields.io/badge/tests-passing-brightgreen)](https://github.com/variablesoftware/ts-retry-backoff/actions)
 [![NPM version](https://img.shields.io/npm/v/@variablesoftware/ts-retry-backoff?style=flat-square)](https://www.npmjs.com/package/@variablesoftware/ts-retry-backoff)
 [![License](https://img.shields.io/github/license/variablesoftware/ts-retry-backoff?style=flat-square)](https://github.com/variablesoftware/ts-retry-backoff/blob/main/LICENSE.txt)
+[![Coverage](https://img.shields.io/coveralls/github/variablesoftware/ts-retry-backoff/main)](https://coveralls.io/github/variablesoftware/ts-retry-backoff)
+[![Bundle Size](https://img.shields.io/bundlephobia/minzip/@variablesoftware/ts-retry-backoff)](https://bundlephobia.com/package/@variablesoftware/ts-retry-backoff)
+[![Downloads](https://img.shields.io/npm/dm/@variablesoftware/ts-retry-backoff)](https://www.npmjs.com/package/@variablesoftware/ts-retry-backoff)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/variablesoftware/ts-retry-backoff/pulls)
 
 > 🎛️🔁🚀 A tiny, zero‑dependencies retry helper with exponential backoff, jitter, min/max delay, and multiple strategies—usable for KV, HTTP, Durable Objects, or any async function.
 

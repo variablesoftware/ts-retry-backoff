@@ -64,17 +64,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        # Unexpected input(s) 'foo', valid inputs are ['always-auth', 'node-version', 'node-version-file', 'architecture', 'check-latest', 'registry-url', 'scope', 'token', 'cache', 'cache-dependency-path', 'mirror', 'mirror-token']
         with:
-          #always-auth: true
-          #check-latest: true
           node-version: "lts/*"
           cache: "pnpm"
-          #registry-url: "https://registry.npmjs.org/"
-          #scope: ${SCOPE}
-          #token: ${NPM_TOKEN}
-          #token: ${{secrets.VS_NPM_TOKEN}}
-          #token: ${VS_NPM_TOKEN}
       - name: Install pnpm
         run: npm install -g pnpm
       - run: pnpm install --frozen-lockfile

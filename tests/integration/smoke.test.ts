@@ -16,7 +16,7 @@ function run(cmd, opts = {}) {
 const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ts-retry-backoff-smoke-'));
 const origCwd = process.cwd();
 
-const shouldRunSmoke = process.env.BACKOFF_SMOKE === '1';
+const shouldRunSmoke = process.env.SMOKE === '1';
 
 test.skipIf(!shouldRunSmoke)('npm package can be installed and imported (smoke test)', async () => {
   try {
@@ -34,10 +34,22 @@ test.skipIf(!shouldRunSmoke)('npm package can be installed and imported (smoke t
     const pkgJson = require(path.join(origCwd, 'package.json'));
     const entry = pkgJson.main || 'index.js';
     const entryPath = path.join(tmpDir, 'node_modules', pkgJson.name, entry);
-    await import(entryPath);
+    const imported = await import(entryPath);
+    // Test the retryBackoff function from the installed package
+    if (typeof imported.retryBackoff !== 'function') {
+      throw new Error('retryBackoff is not exported as a function from the installed package');
+    }
+    // Run a basic retryBackoff usage
+    let called = 0;
+    const result = await imported.retryBackoff(() => {
+      called++;
+      if (called < 2) return Promise.reject(new Error('fail'));
+      return Promise.resolve('ok');
+    }, { maxRetries: 2 });
+    if (result !== 'ok') throw new Error('retryBackoff did not return expected result');
     if (isDebug || isCI) {
       // eslint-disable-next-line no-console
-      console.log('Smoke test passed: package can be installed and imported.');
+      console.log('Smoke test passed: package can be installed, imported, and used.');
     }
   } catch (e) {
     if (isDebug || isCI) {

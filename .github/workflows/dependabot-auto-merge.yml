@@ -36,6 +36,8 @@ jobs:
       - run: pnpm run lint
       - run: pnpm run build
       - run: pnpm vitest -- --coverage --reporter=verbose
+        env:
+          TEST: 1
 
   
   coveralls-runner:
@@ -94,7 +96,7 @@ jobs:
           which pnpm
           env | grep -E 'PNPM|NPM|NODE|PATH'
       - run: pnpm install --frozen-lockfile
-      - run: pnpm run semantic-release
+      - run: pnpm semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SCOPE: ${{secrets.scope}}

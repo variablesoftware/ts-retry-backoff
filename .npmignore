@@ -1,4 +1,3 @@
-*.ts
 *.test.*
 tests/
 docs/
@@ -6,10 +5,9 @@ docs/
 .eslintrc*
 eslint.config.js
 .prettier*
-husky/
+.husky/
 vitest.config.*
 tsconfig*.json
-README.md
 .yarn/
 .pnp.*
 dist/tests/*.*

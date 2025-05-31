@@ -1,3 +1,10 @@
+## [0.1.2](https://github.com/variablesoftware/ts-retry-backoff/compare/v0.1.1...v0.1.2) (2025-05-31)
+
+
+### Bug Fixes
+
+* (package): Update exports field to use correct module entry point 🪄 ([4344560](https://github.com/variablesoftware/ts-retry-backoff/commit/434456091eb52edaf2c85b597af839377fbbe6b9))
+
 ## [0.1.1](https://github.com/variablesoftware/ts-retry-backoff/compare/v0.1.0...v0.1.1) (2025-05-31)
 
 

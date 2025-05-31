@@ -61,7 +61,7 @@ jobs:
           env | grep -E 'PNPM|NPM|NODE|PATH'
       - run: pnpm install --frozen-lockfile
       - run: pnpm run build
-      - run: pnpm vitest -- --coverage --reporter=verbose
+      - run: pnpm vitest --coverage --reporter=verbose
       - name: Coveralls GitHub Action
         uses: coverallsapp/github-action@v2.3.6
         with:

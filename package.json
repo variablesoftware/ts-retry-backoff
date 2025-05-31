@@ -47,7 +47,7 @@
   "scripts": {
     "upgrade:latest": "pnpm self-update && pnpm up --latest",
     "upgrade:all": "pnpm up --latest --recursive",
-    "bump": "git commit --allow-empty -m '🪄 fix: empty commit'",
+    "bump": "git commit --allow-empty -m 'fix: empty commit 🪄'",
     "build": "tsc",
     "prepare": "husky install",
     "watch:build": "tsc --watch",

@@ -25,6 +25,14 @@ jobs:
       - uses: pnpm/action-setup@v3
         with:
           version: latest
+      - name: Debug pnpm environment
+        run: |
+          echo "PATH: $PATH"
+          echo "NODE VERSION: $(node --version)"
+          echo "NPM VERSION: $(npm --version)"
+          echo "PNPM VERSION: $(pnpm --version)"
+          which pnpm
+          env | grep -E 'PNPM|NPM|NODE|PATH'
       - run: pnpm install --frozen-lockfile
       - run: pnpm run lint
       - run: pnpm run build
@@ -43,6 +51,14 @@ jobs:
       - uses: pnpm/action-setup@v3
         with:
           version: latest
+      - name: Debug pnpm environment
+        run: |
+          echo "PATH: $PATH"
+          echo "NODE VERSION: $(node --version)"
+          echo "NPM VERSION: $(npm --version)"
+          echo "PNPM VERSION: $(pnpm --version)"
+          which pnpm
+          env | grep -E 'PNPM|NPM|NODE|PATH'
       - run: pnpm install --frozen-lockfile
       - run: pnpm run build
       - run: pnpm run vitest --coverage --reporter=verbose
@@ -72,6 +88,14 @@ jobs:
       - uses: pnpm/action-setup@v3
         with:
           version: latest
+      - name: Debug pnpm environment
+        run: |
+          echo "PATH: $PATH"
+          echo "NODE VERSION: $(node --version)"
+          echo "NPM VERSION: $(npm --version)"
+          echo "PNPM VERSION: $(pnpm --version)"
+          which pnpm
+          env | grep -E 'PNPM|NPM|NODE|PATH'
       - run: pnpm install --frozen-lockfile
       #- run: yarn --version
       #- run: cat /home/runner/work/_temp/.npmrc

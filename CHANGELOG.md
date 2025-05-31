@@ -1,3 +1,11 @@
+## [0.1.1](https://github.com/variablesoftware/ts-retry-backoff/compare/v0.1.0...v0.1.1) (2025-05-31)
+
+
+### Bug Fixes
+
+* empty commit 🪄 ([191a3d8](https://github.com/variablesoftware/ts-retry-backoff/commit/191a3d824d9632b8ff5f62d3a6945f35afdeaaca))
+* empty commit bump to fix version. 🪄 ([783135e](https://github.com/variablesoftware/ts-retry-backoff/commit/783135ed4d4b3337906105a5a1b6045537d692e1))
+
 # [0.1.0](https://github.com/variablesoftware/ts-retry-backoff/compare/v0.0.7...v0.1.0) (2025-05-27)
 
 

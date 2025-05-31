@@ -22,11 +22,10 @@ jobs:
         with:
           node-version: "lts/*"
           cache: "npm"
-      - run: corepack enable && corepack prepare yarn@4.9.1 --activate
-      - run: yarn install --immutable
-      - run: yarn lint
-      - run: yarn build
-      - run: yarn vitest --coverage
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run lint
+      - run: pnpm run build
+      - run: pnpm run vitest --coverage
 
   
   coveralls-runner:
@@ -37,10 +36,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "lts/*"
-      - run: corepack enable && corepack prepare yarn@4.9.1 --activate
-      - run: yarn install --immutable
-      - run: yarn build
-      - run: yarn vitest --coverage --reporter=verbose
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run build
+      - run: pnpm run vitest --coverage --reporter=verbose
       - name: Coveralls GitHub Action
         uses: coverallsapp/github-action@v2.3.6
         with:
@@ -71,16 +69,15 @@ jobs:
           #token: ${NPM_TOKEN}
           #token: ${{secrets.VS_NPM_TOKEN}}
           #token: ${VS_NPM_TOKEN}
-      - run: corepack enable && corepack prepare yarn@4.9.1 --activate
+      - run: pnpm install --frozen-lockfile
       #- run: yarn --version
-      - run: yarn install --immutable
       #- run: cat /home/runner/work/_temp/.npmrc
       #- run: cat /home/runner/work/_temp/.yarnrc.yml
         #- run: yarn add -D husky
         #- run: yarn npm whoami --scope ${{secrets.scope}} --publish
         #- run: yarn npm publish --access public
         #- run: yarn npm publish --provenance --access public
-      - run: yarn semantic-release
+      - run: pnpm run semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SCOPE: ${{secrets.scope}}

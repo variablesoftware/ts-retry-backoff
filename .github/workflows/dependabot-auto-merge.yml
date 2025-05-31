@@ -97,13 +97,6 @@ jobs:
           which pnpm
           env | grep -E 'PNPM|NPM|NODE|PATH'
       - run: pnpm install --frozen-lockfile
-      #- run: yarn --version
-      #- run: cat /home/runner/work/_temp/.npmrc
-      #- run: cat /home/runner/work/_temp/.yarnrc.yml
-        #- run: yarn add -D husky
-        #- run: yarn npm whoami --scope ${{secrets.scope}} --publish
-        #- run: yarn npm publish --access public
-        #- run: yarn npm publish --provenance --access public
       - run: pnpm run semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

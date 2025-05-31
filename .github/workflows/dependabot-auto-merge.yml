@@ -37,7 +37,7 @@ jobs:
       - run: pnpm run build
       - run: pnpm vitest -- --coverage --reporter=verbose
         env:
-          TEST: 1
+          SMOKE: 1
 
   
   coveralls-runner:

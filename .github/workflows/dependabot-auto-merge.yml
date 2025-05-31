@@ -21,7 +21,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "lts/*"
-          cache: "npm"
+          cache: "pnpm"
       - run: pnpm install --frozen-lockfile
       - run: pnpm run lint
       - run: pnpm run build
@@ -36,6 +36,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "lts/*"
+          cache: "pnpm"
       - run: pnpm install --frozen-lockfile
       - run: pnpm run build
       - run: pnpm run vitest --coverage --reporter=verbose
@@ -64,6 +65,7 @@ jobs:
           #always-auth: true
           #check-latest: true
           node-version: "lts/*"
+          cache: "pnpm"
           #registry-url: "https://registry.npmjs.org/"
           #scope: ${SCOPE}
           #token: ${NPM_TOKEN}

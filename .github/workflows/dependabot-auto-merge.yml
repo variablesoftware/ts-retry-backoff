@@ -35,7 +35,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm run lint
       - run: pnpm run build
-      - run: pnpm vitest -- --coverage --reporter=verbose
+      - run: pnpm vitest --coverage --reporter=verbose
         env:
           SMOKE: 1
 

@@ -13,7 +13,7 @@ function run(cmd, opts = {}) {
   return execSync(cmd, { stdio: 'inherit', ...opts });
 }
 
-const shouldRunSmoke = process.env.BACKOFF_REGISTRY_SMOKE === '1';
+const shouldRunSmoke = process.env.REGISTRY_SMOKE === '1';
 
 test.skipIf(!shouldRunSmoke)('npm package can be installed and imported from registry (smoke test)', async () => {
   // Use a temp directory for the test
@@ -28,10 +28,18 @@ test.skipIf(!shouldRunSmoke)('npm package can be installed and imported from reg
     const pkgJson = require(path.join(tmpDir, 'node_modules', '@variablesoftware', 'ts-retry-backoff', 'package.json'));
     const entry = pkgJson.main || 'index.js';
     const entryPath = path.join(tmpDir, 'node_modules', '@variablesoftware', 'ts-retry-backoff', entry);
-    await import(entryPath);
+    const retryBackoff = await import(entryPath);
+    // Use the imported module in a real retry scenario
+    let attempt = 0;
+    const result = await retryBackoff.retryBackoff(async () => {
+      attempt++;
+      if (attempt < 2) throw new Error('fail');
+      return 'success';
+    }, { retries: 2 });
+    if (result !== 'success') throw new Error('retryBackoff did not return expected result');
     if (isDebug || isCI) {
       // eslint-disable-next-line no-console
-      console.log('Smoke test passed: package can be installed and imported from registry.');
+      console.log('Smoke test passed: package can be installed, imported, and used from registry.');
     }
   } catch (e) {
     if (isDebug || isCI) {

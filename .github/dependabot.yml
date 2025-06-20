@@ -3,7 +3,7 @@ updates:
   - package-ecosystem: "npm" # use npm for pnpm monorepo
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
       time: "03:00"
       timezone: "America/Los_Angeles"
     open-pull-requests-limit: 2

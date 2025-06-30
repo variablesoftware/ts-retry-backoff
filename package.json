@@ -104,7 +104,7 @@
     "eslint-plugin-tsdoc": "^0.4.0",
     "husky": "^9.1.7",
     "prettier": "^3.6.0",
-    "semantic-release": "^24.2.5",
+    "semantic-release": "^24.2.6",
     "terser": "^5.43.1",
     "tslib": "^2.8.1",
     "typescript": "^5.8.3",

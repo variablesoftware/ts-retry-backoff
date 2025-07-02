@@ -1,3 +1,10 @@
+## [0.3.1](https://github.com/variablesoftware/ts-retry-backoff/compare/v0.3.0...v0.3.1) (2025-07-02)
+
+
+### Bug Fixes
+
+* update deps. Implement code changes to enhance functionality and improve performance ([53aa355](https://github.com/variablesoftware/ts-retry-backoff/commit/53aa355010ac3db1410fc3840468bd82bd058c35))
+
 # [0.3.0](https://github.com/variablesoftware/ts-retry-backoff/compare/v0.2.1...v0.3.0) (2025-06-20)
 
 ## [0.2.1](https://github.com/variablesoftware/ts-retry-backoff/compare/v0.2.0...v0.2.1) (2025-06-20)

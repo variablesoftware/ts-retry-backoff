@@ -15,8 +15,8 @@ importers:
         specifier: ^9.39.1
         version: 9.39.1
       '@microsoft/tsdoc':
-        specifier: ^0.15.1
-        version: 0.15.1
+        specifier: ^0.16.0
+        version: 0.16.0
       '@microsoft/tsdoc-config':
         specifier: ^0.18.0
         version: 0.18.0
